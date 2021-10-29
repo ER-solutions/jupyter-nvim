@@ -1,1 +1,1 @@
-# jupyter=nvim
+# jupyter-nvim
