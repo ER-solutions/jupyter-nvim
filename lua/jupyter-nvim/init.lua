@@ -1,3 +1,57 @@
+path='/home/eetakala/test/jupyter'
+
+local function set_test_mappings()
+	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").start_jupyter_notebook()<esc>', { noremap = true, silent = true })
+	vim.api.nvim_set_keymap('n', '<backspace>', ':lua require("jupyter-nvim").stop_jupyter_notebook()<esc>', { noremap = true, silent = true })
+end
+
+local function my_proc(name, cmd)
+	local proc = {}
+	logfile = name..".log"
+	proc.__handle = assert(io.popen(cmd.." 2> "..path..'/'..logfile,'r'))
+	proc.__file = assert(io.open(path..'/'..logfile, 'r'))
+
+	proc.lines = function(self)
+		return self.__handle:lines()
+	end
+	
+	proc.close = function(self)
+		self.__handle:close()
+		self.__file:close()
+	end
+	return proc
+end
+
+local function read_proc(proc)
+	for line in proc:lines() do
+		print(line)
+	end
+end
+
+local function start_jupyter_notebook()
+	path = vim.fn.expand('%:p:h')
+	print("path = "..path)
+	local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook '..path..'/test.sync.ipynb'
+	start_jupyter_proc = my_proc("start_jupyter", cmd)
+	-- read_proc(start_jupyter_proc)
+end
+
+local function stop_jupyter_notebook()
+	local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook stop'
+	stop_jupyter_proc = my_proc("stop_jupyter", cmd)
+	read_proc(start_jupyter_proc)
+	read_proc(stop_jupyter_proc)
+	stop_jupyter_proc:close()
+	start_jupyter_proc:close()
+end
+
+local function create_jupytext_pair(ipynb_name)
+	pair = assert(io.popen('/bin/cp '..path..'/test.ipynb '..path..'/test.sync.ipynb'))
+	read_process(pair)
+	pair = assert(io.popen('/home/eetakala/miniconda3/bin/jupytext --to py:percent '..path..'/test.sync.ipynb'))
+	read_process(pair)
+	-- os.execute("/home/eetakala/miniconda3/bin/jupyter notebook")
+end
 
 local function pl(msg)
 	vim.api.nvim_paste(msg.."\n", true, -1)
@@ -69,31 +123,6 @@ local function test()
 	createFloatingWindow()
 end
 
-local function read_process(process_file_handle)
-	local output = process_file_handle:read('*all')
-	print(output)
-end
-
-local function start_jupyter_notebook()
-	local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook /home/eetakala/test/jupyter/test.sync.ipynb 2>&1'
-	jupyter_notebook_start = assert(io.popen(cmd))
-	-- os.execute("/home/eetakala/miniconda3/bin/jupyter notebook")
-end
-
-local function stop_jupyter_notebook()
-	-- jupyter_notebook_stop = assert(io.popen('/home/eetakala/miniconda3/bin/jupyter notebook stop'))
-	-- jupyter_notebook_stop:close()
-	-- jupyter_notebook_start:close()
-	os.execute("/home/eetakala/miniconda3/bin/jupyter notebook stop")
-end
-
-local function create_jupytext_pair(ipynb_name)
-	pair = assert(io.popen("/bin/cp /home/eetakala/test/jupyter/test.ipynb /home/eetakala/test/jupyter/test.sync.ipynb"))
-	read_process(pair)
-	pair = assert(io.popen("/home/eetakala/miniconda3/bin/jupytext --to py:percent /home/eetakala/test/jupyter/test.sync.ipynb"))
-	read_process(pair)
-	-- os.execute("/home/eetakala/miniconda3/bin/jupyter notebook")
-end
 
 return {
 	test = test,
@@ -102,5 +131,6 @@ return {
 	start_jupyter_notebook = start_jupyter_notebook,
 	read_jupyter_notebook = read_jupyter_notebook,
 	stop_jupyter_notebook = stop_jupyter_notebook,
-	create_jupytext_pair = create_jupytext_pair
+	create_jupytext_pair = create_jupytext_pair,
+	set_test_mappings = set_test_mappings
 }
