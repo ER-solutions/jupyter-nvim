@@ -4,3 +4,10 @@
 " endfun
 
 " let g:global_test_var = "test"
+
+augroup filetype_jupyternb
+	au!
+	au FileType jupyter-notebook lua require("jupyter-nvim").set_up_jupyter_ascending_for_ipynb_file()
+	au BufUnload *.ipynb :lua require("jupyter-nvim").stop_jupyter_notebook()
+augroup end
+

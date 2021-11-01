@@ -1,4 +1,4 @@
-local function set_test_mappings()
+local function set_mappings()
 	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").start_jupyter_notebook()<esc>', { noremap = true, silent = true })
 	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").set_up_jupyter_ascending_for_ipynb_file()<esc>', { noremap = true, silent = true })
 
@@ -99,7 +99,7 @@ local function set_up_jupyter_ascending_for_ipynb_file()
 	ipynb_sync_file = create_jupytext_pair(ipynb_name)
 	py_sync_file = filebase(ipynb_name)..".sync.py"
 	start_jupyter_notebook(ipynb_sync_file)
-	vim.cmd('e! '..py_sync_file)
+	vim.cmd('sp '..py_sync_file)
 end
 
 local function pl(msg)
@@ -182,5 +182,6 @@ return {
 	create_jupytext_pair = create_jupytext_pair,
 	set_test_mappings = set_test_mappings,
 	fetch_notebook_servers = fetch_notebook_servers,
-	set_up_jupyter_ascending_for_ipynb_file = set_up_jupyter_ascending_for_ipynb_file
+	set_up_jupyter_ascending_for_ipynb_file = set_up_jupyter_ascending_for_ipynb_file,
+	set_test_mappings = set_test_mappings
 }
