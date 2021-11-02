@@ -1,47 +1,18 @@
+my_proc = require("proc").my_proc
+read_proc = require("proc").read_proc
+close_proc = require("proc").close_proc
+create_floating_window = require("window").create_floating_window
+pl = require("window").pl
+json = require("json")
+print_table_keys = require("helpers").print_table_keys
+table_length = require("helpers").table_length
+
 local function set_mappings()
 	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").start_jupyter_notebook()<esc>', { noremap = true, silent = true })
 	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").set_up_jupyter_ascending_for_ipynb_file()<esc>', { noremap = true, silent = true })
 
 	vim.api.nvim_set_keymap('n', '<backspace>', ':lua require("jupyter-nvim").stop_jupyter_notebook()<esc>', { noremap = true, silent = true })
 	vim.api.nvim_set_keymap('n', '<leader><enter>', ':lua require("jupyter-nvim").fetch_notebook_servers()<esc>', { noremap = true, silent = true })
-end
-
-local function touch_file(filepath)
-	file = io.open(filepath, "w")
-	-- file:write("Hello World")
-	file:close()
-end
-
-local function my_proc(name, cmd)
-	local proc = {}
-	logfile = name..".log"
-	touch_file(logfile)
-	proc.__handle = assert(io.popen(cmd.." 2> "..path..'/'..logfile,'r'))
-	proc.__file = assert(io.open(path..'/'..logfile, 'r'))
-
-	proc.lines = function(self)
-		return self.__handle:lines()
-	end
-	
-	proc.close = function(self)
-		self.__handle:close()
-		self.__file:close()
-	end
-	return proc
-end
-
-local function read_proc(proc)
-	if (proc) then
-		for line in proc:lines() do
-			print(line)
-		end
-	end
-end
-
-local function close_proc(proc)
-	if (proc) then 
-		proc:close()
-	end
 end
 
 local function start_jupyter_web_client()
@@ -64,10 +35,25 @@ local function start_jupyter_notebook(ipynb_sync_file)
 end
 
 local function fetch_notebook_servers()
-	print("fetch jupyter notebook servers")
-	fetch_handle = assert(io.popen("jupyter notebook list"))
+	create_floating_window()
+
+	pl("Fetching jupyter notebook servers")
+	fetch_handle = assert(io.popen("jupyter notebook list --jsonlist"))
 	lines = fetch_handle:read("*all")
-	print(lines)
+	lines_table = json.decode(lines)
+	vim.cmd("normal! ggdG")
+	pl("Jupyter notebook servers:")
+	if table_length(lines_table) > 0 then
+		for k,v in pairs(lines_table) do
+			pl(k..": "..lines_table[k].hostname..":"..lines_table[k].port..lines_table[k].notebook_dir)
+			lastv = v
+		end
+		-- print_table_keys(lastv)
+	end
+
+	vim.cmd("nnoremap <buffer> <enter> :q<CR>")
+	vim.cmd("setlocal noma")
+
 end
 
 local function stop_jupyter_notebook()
@@ -102,80 +88,7 @@ local function set_up_jupyter_ascending_for_ipynb_file()
 	vim.cmd('sp '..py_sync_file)
 end
 
-local function pl(msg)
-	vim.api.nvim_paste(msg.."\n", true, -1)
-end
-
-local function printLoadedPackages()
-	pl("Test: printLoadedPackages()")
-	pl("This function prints package.loaded table keys:")
-	for k in pairs(package.loaded) do
-		pl(k)
-	end
-end
-
-local function printWindowSize()
-	print (vim.api.nvim_win_get_width(0),vim.api.nvim_win_get_height(0))
-end
-
-local function setWindowSize(x,y)
-	vim.api.nvim_win_set_width(0,x)
-	vim.api.nvim_win_set_height(0,y)
-end
-
-local function createFloatingWindow()
-	local uis = vim.api.nvim_list_uis()
-	local ui = uis[1]
-	local width = ui.width
-	local height = ui.height
-
-	local bufh = vim.api.nvim_create_buf(false, true)
-	local wId = vim.api.nvim_open_win(bufh, true, {
-		relative = "editor",
-		width = 80,
-		height = height,
-		col = 2,
-		row = 2
-	})
-
-	local window_stuff = {}
-	window_stuff.bufh = bufh
-	window_stuff.wId = wId
-	vim.api.nvim_command('set nonu')
-	pl('testing the nvim_put() function:')
-	pl('window size:'..width..'x'..height)
-	printLoadedPackages()
-	return window_stuff
-end
-
-local function onResize()
-	local uis = vim.api.nvim_list_uis()
-	local ui = uis[1]
-	local width = ui.width
-	local height = ui.height
-	pl("Window size", width, height)
-end
-
-local function printTable(table)
-	for k in pairs(table) do
-		print (k)
-	end
-end
-
-local function printTestVar()
-	--printTable(vim)
-	global_test_var = vim.api.nvim_get_var('global_test_var')
-	print(global_test_var)
-end
-
-local function test()
-	createFloatingWindow()
-end
-
 return {
-	test = test,
-	createFloatingWindow = createFloatingWindow,
-	onResize = onResize,
 	start_jupyter_notebook = start_jupyter_notebook,
 	read_jupyter_notebook = read_jupyter_notebook,
 	stop_jupyter_notebook = stop_jupyter_notebook,
