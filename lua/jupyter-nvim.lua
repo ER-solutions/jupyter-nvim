@@ -36,7 +36,6 @@ end
 
 local function fetch_notebook_servers()
 	create_floating_window()
-
 	pl("Fetching jupyter notebook servers")
 	fetch_handle = assert(io.popen("jupyter notebook list --jsonlist"))
 	lines = fetch_handle:read("*all")
@@ -52,18 +51,23 @@ local function fetch_notebook_servers()
 	end
 
 	vim.cmd("nnoremap <buffer> <enter> :q<CR>")
+	vim.cmd("nnoremap <buffer> <backspace> :lua require('jupyter-nvim').stop_jupyter_notebook()<CR>:q<CR>")
 	vim.cmd("setlocal noma")
-
 end
 
 local function stop_jupyter_notebook()
-	path = vim.fn.expand('%:p:h')
-	local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook stop'
-	stop_jupyter_proc = my_proc("stop_jupyter", cmd)
-	read_proc(start_jupyter_proc)
-	read_proc(stop_jupyter_proc)
-	close_proc(stop_jupyter_proc)
-	close_proc(start_jupyter_proc)
+	local cmd
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local row = cursor[1]-1
+	if row >= 1 and row <= table_length(lines_table) then
+		cmd = '/home/eetakala/miniconda3/bin/jupyter notebook stop '..lines_table[cursor[1]-1].port
+		path = vim.fn.expand('%:p:h')
+		stop_jupyter_proc = my_proc("stop_jupyter", cmd)
+		read_proc(start_jupyter_proc)
+		read_proc(stop_jupyter_proc)
+		close_proc(stop_jupyter_proc)
+		close_proc(start_jupyter_proc)
+	end
 end
 
 local function filebase(filepath)
@@ -85,7 +89,7 @@ local function set_up_jupyter_ascending_for_ipynb_file()
 	ipynb_sync_file = create_jupytext_pair(ipynb_name)
 	py_sync_file = filebase(ipynb_name)..".sync.py"
 	start_jupyter_notebook(ipynb_sync_file)
-	vim.cmd('sp '..py_sync_file)
+	vim.cmd('e '..py_sync_file)
 end
 
 return {
