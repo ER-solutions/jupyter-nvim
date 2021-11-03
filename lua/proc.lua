@@ -37,10 +37,15 @@ local function close_proc(proc)
 	end
 end
 
+local function my_execute(cmd)
+	print(cmd)
+	os.execute(cmd)
+end
 
 return {
 	my_proc = my_proc,
 	read_proc = read_proc,
-	close_proc = close_proc
+	close_proc = close_proc,
+	my_execute = my_execute
 }
 

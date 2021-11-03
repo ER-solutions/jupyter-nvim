@@ -6,7 +6,7 @@ pl = require("window").pl
 json = require("json")
 print_table_keys = require("helpers").print_table_keys
 table_length = require("helpers").table_length
-jupyter_procs = {}
+filebase = require("helpers").filebase
 
 local function set_test_mappings()
 	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").set_up_jupyter_ascending_for_ipynb_file()<esc>', { noremap = true, silent = true })
@@ -66,18 +66,28 @@ local function stop_jupyter_notebook()
 	end
 end
 
-local function filebase(filepath)
-	local filebase = filepath:match("(.+)%..+")
-	return filebase
-end
-
 local function create_jupytext_pair(ipynb_name)
 	ipynb_base = filebase(ipynb_name)
 	ipynb_sync_file = ipynb_base..'.sync.ipynb'
-	pair = assert(io.popen('/bin/cp '..ipynb_name..' '..ipynb_sync_file))
-	pair = assert(io.popen('jupytext --to py:percent '..ipynb_sync_file))
+	local pair = my_proc('pair', '/bin/cp '..ipynb_name..' '..ipynb_sync_file)
+	read_proc(pair)
+	close_proc(pair)
+	local pair = my_proc('pair','jupytext --to py:percent '..ipynb_sync_file)
+	read_proc(pair)
+	close_proc(pair)
 	-- os.execute("/home/eetakala/miniconda3/bin/jupyter notebook")
 	return ipynb_sync_file
+end
+
+local function sync_original(ipynb_sync_name)
+	local ipynb_base = filebase(ipynb_sync_name)
+	local ipynb_base = filebase(ipynb_base)
+	local ipynb_sync_name = ipynb_base..".sync.ipynb"
+	local ipynb_original = ipynb_base..".ipynb"
+	local cmd = '/bin/cp '..ipynb_sync_name..' '..ipynb_original
+	local sync = my_proc('sync', cmd)
+	read_proc(sync)
+	close_proc(sync)
 end
 
 local function set_up_jupyter_ascending_for_ipynb_file()
@@ -96,5 +106,6 @@ return {
 	set_test_mappings = set_test_mappings,
 	fetch_notebook_servers = fetch_notebook_servers,
 	set_up_jupyter_ascending_for_ipynb_file = set_up_jupyter_ascending_for_ipynb_file,
-	set_test_mappings = set_test_mappings
+	set_test_mappings = set_test_mappings,
+	sync_original = sync_original
 }

@@ -1,3 +1,8 @@
+local function filebase(filepath)
+	local filebase = filepath:match("(.+)%..+")
+	return filebase
+end
+
 local function print_table_keys(table)
 	for k,v in pairs(table) do
 		print (k)
@@ -14,5 +19,6 @@ end
 
 return {
 	print_table_keys = print_table_keys,
-	table_length = table_length
+	table_length = table_length,
+	filebase = filebase
 }
