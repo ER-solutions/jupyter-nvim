@@ -57,7 +57,7 @@ local function fetch_notebook_servers()
 			pl(k..": "..lines_table[k].hostname..":"..lines_table[k].port..lines_table[k].notebook_dir)
 			lastv = v
 		end
-		print_table_keys(lastv)
+		-- print_table_keys(lastv)
 	end
 
 	vim.cmd("nnoremap <buffer> <enter> :lua require('jupyter-nvim').server_list_enter_pressed()<CR>")
