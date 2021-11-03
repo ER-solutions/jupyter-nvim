@@ -5,6 +5,7 @@ local function touch_file(filepath)
 end
 
 local function my_proc(name, cmd)
+	path = vim.fn.expand('%:p:h')
 	local proc = {}
 	logfile = name..".log"
 	touch_file(logfile)

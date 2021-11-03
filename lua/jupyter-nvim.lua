@@ -6,13 +6,11 @@ pl = require("window").pl
 json = require("json")
 print_table_keys = require("helpers").print_table_keys
 table_length = require("helpers").table_length
+jupyter_procs = {}
 
-local function set_mappings()
-	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").start_jupyter_notebook()<esc>', { noremap = true, silent = true })
+local function set_test_mappings()
 	vim.api.nvim_set_keymap('n', '<enter>', ':lua require("jupyter-nvim").set_up_jupyter_ascending_for_ipynb_file()<esc>', { noremap = true, silent = true })
 
-	vim.api.nvim_set_keymap('n', '<backspace>', ':lua require("jupyter-nvim").stop_jupyter_notebook()<esc>', { noremap = true, silent = true })
-	vim.api.nvim_set_keymap('n', '<leader><enter>', ':lua require("jupyter-nvim").fetch_notebook_servers()<esc>', { noremap = true, silent = true })
 end
 
 local function start_jupyter_web_client()
@@ -27,7 +25,7 @@ end
 local function start_jupyter_notebook(ipynb_sync_file)
 	path = vim.fn.expand('%:p:h')
 	print("path = "..path)
-	local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook '..ipynb_sync_file
+	local cmd = 'jupyter notebook '..ipynb_sync_file
 	-- local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook --no-browser'
 	start_jupyter_proc = my_proc("start_jupyter", cmd)
 	-- start_jupyter_web_client()
@@ -60,13 +58,11 @@ local function stop_jupyter_notebook()
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	local row = cursor[1]-1
 	if row >= 1 and row <= table_length(lines_table) then
-		cmd = '/home/eetakala/miniconda3/bin/jupyter notebook stop '..lines_table[cursor[1]-1].port
+		cmd = 'jupyter notebook stop '..lines_table[cursor[1]-1].port
 		path = vim.fn.expand('%:p:h')
 		stop_jupyter_proc = my_proc("stop_jupyter", cmd)
-		read_proc(start_jupyter_proc)
 		read_proc(stop_jupyter_proc)
 		close_proc(stop_jupyter_proc)
-		close_proc(start_jupyter_proc)
 	end
 end
 
@@ -79,7 +75,7 @@ local function create_jupytext_pair(ipynb_name)
 	ipynb_base = filebase(ipynb_name)
 	ipynb_sync_file = ipynb_base..'.sync.ipynb'
 	pair = assert(io.popen('/bin/cp '..ipynb_name..' '..ipynb_sync_file))
-	pair = assert(io.popen('/home/eetakala/miniconda3/bin/jupytext --to py:percent '..ipynb_sync_file))
+	pair = assert(io.popen('jupytext --to py:percent '..ipynb_sync_file))
 	-- os.execute("/home/eetakala/miniconda3/bin/jupyter notebook")
 	return ipynb_sync_file
 end
