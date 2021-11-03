@@ -49,7 +49,7 @@ local function fetch_notebook_servers()
 	end
 
 	vim.cmd("nnoremap <buffer> <enter> :q<CR>")
-	vim.cmd("nnoremap <buffer> <backspace> :lua require('jupyter-nvim').stop_jupyter_notebook()<CR>:q<CR>")
+	vim.cmd("nnoremap <buffer> <backspace> :lua require('jupyter-nvim').stop_jupyter_notebook()<CR>:q<CR>:lua require('jupyter-nvim').fetch_notebook_servers()<CR>")
 	vim.cmd("setlocal noma")
 end
 
