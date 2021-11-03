@@ -14,30 +14,27 @@ local function set_test_mappings()
 end
 
 local function start_jupyter_web_client(port)
-	path = vim.fn.expand('%:p:h')
+	local path = vim.fn.expand('%:p:h')
 	print("Starting webclient at "..port)
 	-- local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook '..path..'/test.sync.ipynb'
 	local cmd = 'x-www-browser http://localhost:'..port
-	start_jupyter_web_client_proc = my_proc("start_jupyter_web_client", cmd)
-	-- read_proc(start_jupyter_proc)
+	local start_jupyter_web_client_proc = my_proc("start_jupyter_web_client", cmd)
 end
 
 local function start_jupyter_notebook(ipynb_sync_file)
-	path = vim.fn.expand('%:p:h')
+	local path = vim.fn.expand('%:p:h')
 	print("path = "..path)
 	-- local cmd = 'jupyter notebook '..ipynb_sync_file
 	local cmd = 'jupyter notebook --no-browser'
-	start_jupyter_proc = my_proc("start_jupyter", cmd)
-	-- start_jupyter_web_client()
-	-- read_proc(start_jupyter_proc)
+	local start_jupyter_proc = my_proc("start_jupyter", cmd)
 end
 
 local function server_list_enter_pressed()
 	local cmd
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	local row = cursor[1]-1
-	if row >= 1 and row <= table_length(lines_table) then
-		local port = lines_table[cursor[1]-1].port
+	if row >= 1 and row <= table_length(servers_table) then
+		local port = servers_table[cursor[1]-1].port
 		start_jupyter_web_client(port)
 	else
 		vim.cmd(':q')
@@ -47,15 +44,15 @@ end
 local function fetch_notebook_servers()
 	create_floating_window()
 	pl("Fetching jupyter notebook servers")
-	fetch_handle = assert(io.popen("jupyter notebook list --jsonlist"))
-	lines = fetch_handle:read("*all")
-	lines_table = json.decode(lines)
+	local fetch_handle = assert(io.popen("jupyter notebook list --jsonlist"))
+	local lines = fetch_handle:read("*all")
+	servers_table = json.decode(lines)
 	vim.cmd("normal! ggdG")
 	pl("Jupyter notebook servers:")
-	if table_length(lines_table) > 0 then
-		for k,v in pairs(lines_table) do
-			pl(k..": "..lines_table[k].hostname..":"..lines_table[k].port..lines_table[k].notebook_dir)
-			lastv = v
+	if table_length(servers_table) > 0 then
+		for k,v in pairs(servers_table) do
+			pl(k..": "..servers_table[k].hostname..":"..servers_table[k].port..servers_table[k].notebook_dir)
+			-- lastv = v
 		end
 		-- print_table_keys(lastv)
 	end
@@ -69,18 +66,17 @@ local function stop_jupyter_notebook()
 	local cmd
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	local row = cursor[1]-1
-	if row >= 1 and row <= table_length(lines_table) then
-		cmd = 'jupyter notebook stop '..lines_table[cursor[1]-1].port
-		path = vim.fn.expand('%:p:h')
-		stop_jupyter_proc = my_proc("stop_jupyter", cmd)
+	if row >= 1 and row <= table_length(servers_table) then
+		cmd = 'jupyter notebook stop '..servers_table[cursor[1]-1].port
+		local stop_jupyter_proc = my_proc("stop_jupyter", cmd)
 		read_proc(stop_jupyter_proc)
 		close_proc(stop_jupyter_proc)
 	end
 end
 
 local function create_jupytext_pair(ipynb_name)
-	ipynb_base = filebase(ipynb_name)
-	ipynb_sync_file = ipynb_base..'.sync.ipynb'
+	local ipynb_base = filebase(ipynb_name)
+	local ipynb_sync_file = ipynb_base..'.sync.ipynb'
 	local pair = my_proc('pair', '/bin/cp '..ipynb_name..' '..ipynb_sync_file)
 	read_proc(pair)
 	close_proc(pair)
@@ -103,9 +99,9 @@ local function sync_original(ipynb_sync_name)
 end
 
 local function set_up_jupyter_ascending_for_ipynb_file()
-	ipynb_name = vim.fn.expand('%')
-	ipynb_sync_file = create_jupytext_pair(ipynb_name)
-	py_sync_file = filebase(ipynb_name)..".sync.py"
+	local ipynb_name = vim.fn.expand('%')
+	local ipynb_sync_file = create_jupytext_pair(ipynb_name)
+	local py_sync_file = filebase(ipynb_name)..".sync.py"
 	start_jupyter_notebook(ipynb_sync_file)
 	vim.cmd('e '..py_sync_file)
 end

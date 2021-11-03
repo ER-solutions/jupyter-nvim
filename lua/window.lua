@@ -12,7 +12,7 @@ end
 
 local function printTestVar()
 	--printTable(vim)
-	global_test_var = vim.api.nvim_get_var('global_test_var')
+	local global_test_var = vim.api.nvim_get_var('global_test_var')
 	print(global_test_var)
 end
 local function printWindowSize()

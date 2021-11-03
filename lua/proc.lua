@@ -1,5 +1,5 @@
 local function touch_file(filepath)
-	file = io.open(filepath, "w")
+	local file = io.open(filepath, "w")
 	-- file:write("Hello World")
 	file:close()
 end
@@ -7,7 +7,7 @@ end
 local function my_proc(name, cmd)
 	path = vim.fn.expand('%:p:h')
 	local proc = {}
-	logfile = name..".log"
+	local logfile = name..".log"
 	touch_file(logfile)
 	proc.__handle = assert(io.popen(cmd.." 2> "..path..'/'..logfile,'r'))
 	proc.__file = assert(io.open(path..'/'..logfile, 'r'))

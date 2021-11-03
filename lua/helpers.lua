@@ -10,7 +10,7 @@ local function print_table_keys(table)
 end
 
 local function table_length(table)
-	len = 0
+	local len = 0
 	for k in pairs(table) do
 		len=len+1
 	end
