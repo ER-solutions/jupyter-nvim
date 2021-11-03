@@ -13,11 +13,11 @@ local function set_test_mappings()
 
 end
 
-local function start_jupyter_web_client()
+local function start_jupyter_web_client(port)
 	path = vim.fn.expand('%:p:h')
-	print("Starting webclient "..path)
+	print("Starting webclient at "..port)
 	-- local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook '..path..'/test.sync.ipynb'
-	local cmd = 'x-www-browser http://localhost:8888/notebooks/test.sync.ipynb'
+	local cmd = 'x-www-browser http://localhost:'..port
 	start_jupyter_web_client_proc = my_proc("start_jupyter_web_client", cmd)
 	-- read_proc(start_jupyter_proc)
 end
@@ -25,11 +25,23 @@ end
 local function start_jupyter_notebook(ipynb_sync_file)
 	path = vim.fn.expand('%:p:h')
 	print("path = "..path)
-	local cmd = 'jupyter notebook '..ipynb_sync_file
-	-- local cmd = '/home/eetakala/miniconda3/bin/jupyter notebook --no-browser'
+	-- local cmd = 'jupyter notebook '..ipynb_sync_file
+	local cmd = 'jupyter notebook --no-browser'
 	start_jupyter_proc = my_proc("start_jupyter", cmd)
 	-- start_jupyter_web_client()
 	-- read_proc(start_jupyter_proc)
+end
+
+local function server_list_enter_pressed()
+	local cmd
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local row = cursor[1]-1
+	if row >= 1 and row <= table_length(lines_table) then
+		local port = lines_table[cursor[1]-1].port
+		start_jupyter_web_client(port)
+	else
+		vim.cmd(':q')
+	end
 end
 
 local function fetch_notebook_servers()
@@ -45,10 +57,10 @@ local function fetch_notebook_servers()
 			pl(k..": "..lines_table[k].hostname..":"..lines_table[k].port..lines_table[k].notebook_dir)
 			lastv = v
 		end
-		-- print_table_keys(lastv)
+		print_table_keys(lastv)
 	end
 
-	vim.cmd("nnoremap <buffer> <enter> :q<CR>")
+	vim.cmd("nnoremap <buffer> <enter> :lua require('jupyter-nvim').server_list_enter_pressed()<CR>")
 	vim.cmd("nnoremap <buffer> <backspace> :lua require('jupyter-nvim').stop_jupyter_notebook()<CR>:q<CR>:lua require('jupyter-nvim').fetch_notebook_servers()<CR>")
 	vim.cmd("setlocal noma")
 end
@@ -107,5 +119,6 @@ return {
 	fetch_notebook_servers = fetch_notebook_servers,
 	set_up_jupyter_ascending_for_ipynb_file = set_up_jupyter_ascending_for_ipynb_file,
 	set_test_mappings = set_test_mappings,
-	sync_original = sync_original
+	sync_original = sync_original,
+	server_list_enter_pressed = server_list_enter_pressed
 }
