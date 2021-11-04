@@ -26,7 +26,7 @@ local function start_jupyter_notebook(ipynb_sync_file)
 	print("path = "..path)
 	-- local cmd = 'jupyter notebook '..ipynb_sync_file
 	local cmd = 'jupyter notebook --no-browser'
-	local start_jupyter_proc = my_proc("start_jupyter", cmd)
+	start_jupyter_proc = my_proc("start_jupyter", cmd)
 end
 
 local function create_jupytext_pair(ipynb_name)
