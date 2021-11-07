@@ -113,7 +113,7 @@ local function fetch_notebook_servers()
 		pl("No servers found. Move your cursor to one of the options and press enter:")
 		pl("\t 1. Launch a server!")
 		pl("\t 2. Quit!")
-		vim.cmd("normal k")
+		vim.cmd("normal 2k")
 	end
 
 	vim.cmd("nnoremap <buffer> <enter> :lua require('jupyter-nvim').server_list_enter_pressed()<CR>")
