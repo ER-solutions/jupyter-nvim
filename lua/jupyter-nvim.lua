@@ -46,7 +46,7 @@ local function set_up_jupyter_ascending_for_ipynb_file()
 	local ipynb_name = vim.fn.expand('%')
 	local ipynb_sync_file = create_jupytext_pair(ipynb_name)
 	local py_sync_file = filebase(ipynb_name)..".sync.py"
-	start_jupyter_notebook(ipynb_sync_file)
+	-- start_jupyter_notebook(ipynb_sync_file)
 	vim.cmd('e '..py_sync_file)
 end
 
@@ -61,7 +61,7 @@ local function operate_on_server_list(operation)
 	local row = cursor[1]
 
 	if operation == "start" then
-		local rows = 1 -- number of help text rows -- This sucks!
+		local rows = 1 -- number of help text rows -- This sucks! TODO: create or find a real selector ui component.
 		if row > 0 + rows and row <= rows + table_length(servers_table) then
 			local port = servers_table[cursor[1]-rows].port
 			start_jupyter_web_client(port)
