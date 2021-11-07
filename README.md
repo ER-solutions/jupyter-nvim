@@ -12,7 +12,7 @@ For making the pairing between .sync.ipynb and .sync.py
 
 ```pip install jupytext```
 
-If you want to synchronize the .sync.ipynb file with your .sync.py file, you should install the jupyter_ascending: see installation at https://github.com/untitled-ai/jupyter_ascending
+If you want to synchronize the .sync.ipynb file with your .sync.py (when you write the .sync.py file, .sync.ipynb file is updated accordingly in the jupyter web client that renders the .ipynb file), you should install the jupyter_ascending: see installation at https://github.com/untitled-ai/jupyter_ascending
 
 And the vim client https://github.com/untitled-ai/jupyter_ascending.vim
 
