@@ -27,7 +27,7 @@ And the vim client https://github.com/untitled-ai/jupyter_ascending.vim
 6. Press ```<space><space><enter>``` - floating window contains now one line with the information of that server with the cursor pointing to it
 7. Press ```<enter>``` - nvim-jupyter starts a web browser and a client session at the server address
 8. Open "test.sync.ipynb" on the client
-9. Modify test.sync.py on nvim and save - jupyter_ascending updates the test.sync.ipynb accordingly
+9. Modify test.sync.py on nvim and save - jupyter_ascending updates the test.sync.ipynb accordingly (NOTE that the jupyter_ascending vim plugin can control the notebook and for example normally pressing ```<space><space>X``` one can run the whole notebook from the start until end from nvim (see https://github.com/untitled-ai/jupyter_ascending.vim)
 10. Save test.sync.ipynb file on the web client and press <space><spcase>w on the nvim - jupyter-nvim applies the changes made on test.sync.ipynb to test.ipynb (copies test.sync.ipynb to test.ipynb)
 11. Press  ```<space><space><enter>``` - server list opens and cursor points to the running server
 12. Press ```<backspace>``` - jupyter-nvim closes the jupyter notebook server that the cursor is pointing to
