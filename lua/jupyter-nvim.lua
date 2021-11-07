@@ -61,12 +61,12 @@ local function operate_on_server_list(operation)
 	local row = cursor[1]
 
 	if operation == "start" then
+		vim.cmd(':q')
 		local rows = 1 -- number of help text rows -- This sucks! TODO: create or find a real selector ui component.
 		if row > 0 + rows and row <= rows + table_length(servers_table) then
 			local port = servers_table[cursor[1]-rows].port
 			start_jupyter_web_client(port)
 		else
-			vim.cmd(':q')
 			if row == rows + 1 then
 				start_jupyter_notebook_for_sync_file()
 			end
