@@ -12,7 +12,7 @@ For making the pairing between .sync.ipynb and .sync.py
 
 ```pip install jupytext```
 
-If you want to synchronize the .sync.ipynb file with your .sync.py (when you write the .sync.py file, .sync.ipynb file is updated accordingly in the jupyter web client that renders the .ipynb file), you should install the jupyter_ascending: see installation at https://github.com/untitled-ai/jupyter_ascending
+If you want to synchronize the .sync.ipynb file with your .sync.py (when you write the .sync.py file, .sync.ipynb file is updated accordingly in the jupyter web client that renders the .sync.ipynb file), you should install the jupyter_ascending: see installation at https://github.com/untitled-ai/jupyter_ascending
 
 And the vim client https://github.com/untitled-ai/jupyter_ascending.vim
 
@@ -31,9 +31,6 @@ And the vim client https://github.com/untitled-ai/jupyter_ascending.vim
 10. Save test.sync.ipynb file on the web client and press ```<space><space>w``` on the nvim - jupyter-nvim applies the changes made on test.sync.ipynb to test.ipynb (copies test.sync.ipynb to test.ipynb)
 11. Press  ```<space><space><enter>``` - server list opens and cursor points to the running server
 12. Press ```<backspace>``` - jupyter-nvim stops the jupyter notebook server that the cursor is pointing to
-
-
-  
 
 
 
