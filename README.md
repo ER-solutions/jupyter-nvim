@@ -8,7 +8,7 @@ Plug 'ER-solutions/jupyter-nvim', {'branch':'main'}
 ```
 
 # Requirements
-For making the pairing with .sync.ipynb and .sync.py
+For making the pairing between .sync.ipynb and .sync.py
 
 ```pip install jupytext```
 
@@ -20,7 +20,7 @@ And the vim client https://github.com/untitled-ai/jupyter_ascending.vim
 
 # Use case
 1. Open a .ipynb file with nvim (for example "test.ipynb", see under test folder) ```nvim test.ipynb``` - nvim opens a raw rendering of the .ipynb file.
-2. Press ```<enter>``` - nvim-jupyter manages the pairing: test.sync.ipynb (a copy of test.ipynb) and test.ipynb.py (jupytext rendering of the test.sync.ipynb) - nvim-jupyter opens the test.sync.py file that the user can edit
+2. Press ```<enter>``` - nvim-jupyter manages the pairing: creates test.sync.ipynb (a copy of test.ipynb) and test.ipynb.py (jupytext rendering of the test.sync.ipynb) - nvim-jupyter opens the test.sync.py file that the user can edit
 3. Press ```<space><space><enter>``` - nvim-jupyter opens a floating window that allows to see all the notebook servers
 4. Assuming there are no servers running press ```<enter>``` - a jupyter notebook server at the current filepath is started
 5. Press ```<space><space><enter>``` - floating window contains now one line with the information of that server with the cursor pointing to it
