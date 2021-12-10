@@ -8,9 +8,12 @@ local function my_proc(name, cmd)
 	path = vim.fn.expand('%:p:h')
 	local proc = {}
 	local logfile = name..".log"
+	local logpath_no_escape = path..'/'..logfile
+	local logpath = vim.fn.fnameescape(path..'/'..logfile)
+	local cmdpopen = cmd..' 2> '..logpath
 	touch_file(logfile)
-	proc.__handle = assert(io.popen(cmd.." 2> "..path..'/'..logfile,'r'))
-	proc.__file = assert(io.open(path..'/'..logfile, 'r'))
+	proc.__handle = assert(io.popen(cmdpopen))
+	proc.__file = assert(io.open(logpath_no_escape, 'r'))
 
 	proc.lines = function(self)
 		return self.__handle:lines()
